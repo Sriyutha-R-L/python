@@ -1,0 +1,8 @@
+Shampoo RS 150
+Toothpaste RS 50
+Soap RS 30
+Deodorant RS 80
+Hair Oil RS 100
+Face Wash RS 120
+Razor RS 90
+Lotion RS 110

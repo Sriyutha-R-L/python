@@ -1,0 +1,8 @@
+Toilet Paper RS 25
+Dish Soap RS 80
+Laundry Detergent RS 200
+Sponges RS 15
+Broom RS 150
+Mop RS 120
+Trash Bags RS 40
+Cleaning Spray RS 90

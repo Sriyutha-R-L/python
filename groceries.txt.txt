@@ -1,0 +1,8 @@
+Milk RS 50
+Eggs RS 120
+Rice RS 250
+Bread RS 40
+Sugar RS 60
+Tomatoes RS 30
+Potatoes RS 45
+Onions RS 35
