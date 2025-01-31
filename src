@@ -1,0 +1,133 @@
+# Optimized Python Order System
+
+import os
+
+# Dictionary to store item categories and their respective files
+CATEGORY_FILES = {
+    "groceries": "groceries.txt",
+    "household": "household.txt",
+    "personal_care": "personal_care.txt"
+}
+
+# Store items and orders dynamically
+items = {category: [] for category in CATEGORY_FILES}
+orders = {category: {} for category in CATEGORY_FILES}
+
+def load_items():
+    """ Load items from files into dictionaries dynamically. """
+    for category, filename in CATEGORY_FILES.items():
+        if os.path.exists(filename):
+            with open(filename, 'r') as file:
+                for line in file:
+                    try:
+                        name, price = line.rsplit('RS', 1)
+                        name, price = name.strip(), float(price.strip())
+                        items[category].append((name, price))
+                        orders[category][name] = 0  # Initialize order count
+                    except ValueError:
+                        print(f"Error processing line in {filename}: {line}")
+
+def print_menu(title, options):
+    """ Display a formatted menu. """
+    print("\n" + "-" * 72)
+    print(title.center(72))
+    print("-" * 72)
+    for key, value in options.items():
+        print(f"  {key}) {value}")
+    print("-" * 72)
+
+def order_items(category):
+    """ Unified function to handle ordering items dynamically. """
+    while True:
+        options = {i + 1: f"{name} - RS {price}" for i, (name, price) in enumerate(items[category])}
+        print_menu(f"{category.upper()} ITEMS", options)
+        print("\n(M) Main Menu    (E) Exit\n" + "_" * 72)
+
+        choice = input("Select an item number or operation: ").strip().upper()
+        if choice == 'M':
+            return
+        if choice == 'E':
+            print("\nThank you for using the system!")
+            exit()
+
+        try:
+            item_index = int(choice) - 1
+            if 0 <= item_index < len(items[category]):
+                item_name = items[category][item_index][0]
+                quantity = int(input(f"How many {item_name}s would you like to order? "))
+                if quantity > 0:
+                    orders[category][item_name] += quantity
+                    print(f"\n✅ Successfully ordered {quantity} {item_name}(s)!")
+                else:
+                    print("\n⚠️ Invalid quantity. Try again.")
+            else:
+                print("\n⚠️ Invalid selection. Try again.")
+        except ValueError:
+            print("\n⚠️ Invalid input. Enter a number or 'M' to return.")
+
+def main_menu():
+    """ Display the main menu and handle user navigation. """
+    while True:
+        print_menu("MAIN MENU", {
+            "1": "Groceries Order",
+            "2": "Household Order",
+            "3": "Personal Care Order",
+            "4": "View Cart",
+            "5": "Checkout",
+            "E": "Exit"
+        })
+        
+        choice = input("Select an option: ").strip().upper()
+        if choice == '1':
+            order_items("groceries")
+        elif choice == '2':
+            order_items("household")
+        elif choice == '3':
+            order_items("personal_care")
+        elif choice == '4':
+            view_cart()
+        elif choice == '5':
+            checkout()
+        elif choice == 'E':
+            print("\nThank you for using our system. Goodbye!")
+            exit()
+        else:
+            print("\n⚠️ Invalid choice. Try again.")
+
+def view_cart():
+    """ Display the user's current cart with all ordered items. """
+    print("\n" + "=" * 72)
+    print("🛒 CART SUMMARY".center(72))
+    print("=" * 72)
+    total_price = 0
+    for category, items_dict in orders.items():
+        print(f"\n📌 {category.upper()} ITEMS:")
+        for item, quantity in items_dict.items():
+            if quantity > 0:
+                price = next(price for name, price in items[category] if name == item)
+                total = price * quantity
+                total_price += total
+                print(f"  - {item} (x{quantity}) = RS {total:.2f}")
+    print("\n" + "=" * 72)
+    print(f"💰 Total Amount: RS {total_price:.2f}".center(72))
+    print("=" * 72)
+
+def checkout():
+    """ Finalize the order and print receipt. """
+    view_cart()
+    confirm = input("\nProceed to checkout? (Y/N): ").strip().upper()
+    if confirm == 'Y':
+        print("\n✅ Order confirmed! Thank you for shopping with us.")
+        reset_orders()
+    else:
+        print("\n❌ Checkout canceled. Returning to main menu.")
+
+def reset_orders():
+    """ Reset order counts after checkout. """
+    for category in orders:
+        for item in orders[category]:
+            orders[category][item] = 0
+
+# Load data and start the system
+load_items()
+main_menu()
